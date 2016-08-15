@@ -4,17 +4,14 @@
     <title>World Map</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-
-    <link href="css/home.css" rel="stylesheet">
+	<link href="css/home.css" rel="stylesheet">
 </head>
-
 <body>
     <div id="map"></div>
     <div data-tip="This is the text of the tooltip2">
-   		<input title="Search for your city. Click on a result to add the location to the map" id="pac-input" class="controls" type="text" placeholder="Find your location here" onclick="clearText()" tooltip="Tooltip persistant" tooltip-persistent>
+    	<input title="Search for your city. Click on a result to add the location to the map" id="pac-input" class="controls" type="text" placeholder="Find your location here" onclick="clearText()" tooltip="Tooltip persistant" tooltip-persistent>
 	</div>
-
-    <script>
+	<script>
         function initMap(){
             var mapDiv = document.getElementById('map');
             var map = new google.maps.Map(mapDiv,{
@@ -23,9 +20,7 @@
             });
         }
     </script>
-
-
-    <script>
+    <script>
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       //<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA83xw8YXwykCAiTfEwq03PqmdB8IIB8pU&libraries=places">
@@ -157,20 +152,7 @@
     function changeOpacity() {
         heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
     }
-
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA83xw8YXwykCAiTfEwq03PqmdB8IIB8pU&libraries=places,visualization&callback=initMap"
-        async defer></script>
-
-    <!--div id="floating-panel" class="gmnoprint">
-        <button class="gm-style-mtc button" onclick="toggleHeatmap()">Toggle Heatmap</button>
-        <button class="gm-style-mtc button" onclick="changeGradient()">Change gradient</button>
-        <button class="gm-style-mtc button" onclick="changeRadius()">Change radius</button>
-        <button class="gm-style-mtc button" onclick="changeOpacity()">Change opacity</button>
-    </div-->
-    
-    
-
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA83xw8YXwykCAiTfEwq03PqmdB8IIB8pU&libraries=places,visualization&callback=initMap" async defer></script>
 </body>
 </html>
