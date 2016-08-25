@@ -28,6 +28,7 @@
 		var marker;
 		var lat;
 		var lng;
+		var geocoder;
 		
 		function clearText(){
 		    document.getElementById('pac-input').value = "";
@@ -104,7 +105,15 @@
 		        anchorPoint: new google.maps.Point(0, -29)
 		    });
 		    marker.setMap(map);
-		
+			
+			google.maps.event.addListener(map, 'click', function(event) {
+				var coords = event.latLng.toString();
+				
+				geocodeLatLng(geocoder, map, infowindow, coords);
+				//alert(event.latLng);
+			});
+				
+			
 		    infowindow.addListener('closeclick',function(){
 		        marker.setVisible(false); //removes the marker
 		        centerMap();
@@ -161,6 +170,8 @@
 			});   
 			setTimeout(centerMap(), 3000);
 			setTimeout(function a(){infowindow.close();}, 3000);
+			
+			geocoder = new google.maps.Geocoder;
 		}
 		
 		/* Saves location */
@@ -255,7 +266,39 @@
 		    }
 		    return localStorage.pointcount;
 		}
-			
+		
+		function geocodeLatLng(geocoder, map, infowindow, input) {
+			console.log("input:" + input);
+	        input = input.replace(/[{( )}]/g, '');
+	        var latlngStr = input.split(',', 2);
+	        
+	        console.log("lat:\"" + latlngStr[0] + "\" lng:\"" + latlngStr[1]+"\"");
+	        
+	        var latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
+	        
+	        console.log("latlng:" + latlng);
+	        
+	        geocoder.geocode({'location': latlng}, function(results, status) {
+	          if (status === 'OK') {
+	            if (results[1]) {
+	              	//map.setZoom(11);
+					marker = new google.maps.Marker({
+	                position: latlng,
+	                map: map
+	              });
+	              infowindow.setContent(results[1].formatted_address);
+	              infowindow.open(map, marker);
+	            } else {
+	              window.alert('No results found');
+	            }
+	          } else {
+	            window.alert('Geocoder failed due to: ' + status);
+	          }
+	        });
+	      }
+
+	
+	
     </script>
 
 	<!-- Required to use maps -->
