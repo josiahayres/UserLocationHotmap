@@ -10,7 +10,7 @@ if (!$con)
 
 // Create table
 mysql_select_db("$db_database", $con);
-$sql = "CREATE TABLE $db_table('ID' int(11) NOT NULL AUTO_INCREMENT,location varchar(128),timeAdded varchar(64))";
+$sql = "CREATE TABLE $db_table('ID' int(11) NOT NULL AUTO_INCREMENT, lat varchar(64) NOT NULL, lng varchar(64) NOT NULL,timeAdded varchar(64))";
 
 // Execute query
 mysql_query($sql,$con);

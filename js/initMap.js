@@ -1,10 +1,12 @@
+/*eslint-env jquery, browser*/
 // This example requires the Places library. Include the libraries=places
 // parameter when you first load the API. For example:
 //<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA83xw8YXwykCAiTfEwq03PqmdB8IIB8pU&libraries=places">
 var pointsArray;
 var heatmap;
 var map;
-var center = new google.maps.LatLng(9.441688, 179.101678);
+var request;
+var currentLocation;
 
 function clearText(){
     document.getElementById('pac-input').value = "";
@@ -16,6 +18,21 @@ function centerMap(){
 	map.setCenter({lat:9.441688, lng:179.101678});
 }
 function initMap() {
+	var theNewScript = document.createElement("script");
+	theNewScript.type = "text/javascript";
+	theNewScript.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js";
+	document.getElementsByTagName("head")[0].appendChild(theNewScript);
+	// jQuery MAY OR MAY NOT be loaded at this stage
+	var waitForLoad = function () {
+	    if (typeof jQuery != "undefined") {
+	        $.get("myfile.php");
+	    } else {
+	        window.setTimeout(waitForLoad, 1000);
+	    }
+	};
+	window.setTimeout(waitForLoad, 1000);
+	
+	
     pointsArray = new google.maps.MVCArray([
         new google.maps.LatLng(-36.851921, 174.762402),
         new google.maps.LatLng(-36.851921, 174.762402),
@@ -25,7 +42,7 @@ function initMap() {
     );
     //var sanFrancisco = new google.maps.LatLng(37.774546, -122.433523);
     var auckland = new google.maps.LatLng(-36.851921, 174.762402);
-	var center = new google.maps.LatLng(9.441688, 179.101678);
+    var center = new google.maps.LatLng(9.441688, 179.101678);
     map = new google.maps.Map(document.getElementById('map'), {
         center: center,
         zoom: 2,
@@ -87,12 +104,16 @@ function initMap() {
             scaledSize: new google.maps.Size(35, 35)
         }));
         var newLocation = new google.maps.LatLng(place.geometry.location.lat(),place.geometry.location.lng());
+        currentLocation = newLocation;
         marker.setPosition(newLocation);
         marker.setVisible(true);
 		
+		var test = "tester";
+    	// find the 'test' input element and set its value to the above variable
+   		$(this).getElementByID("test").value = currentLocation;
 		
-        pointsArray.push(newLocation);
-
+        /*pointsArray.push(newLocation);*/
+		saveNewLocation(newLocation);
 
         var address = '';
         if (place.address_components) {
@@ -106,6 +127,64 @@ function initMap() {
         infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
         infowindow.open(map, marker);
     });   
+}
+
+/* Saves location */
+
+
+function saveNewLocation(newLocation){
+	console.log("saveNewLocation() fired");
+	//Add to local array
+	pointsArray.push(newLocation);
+	
+	
+	console.log("Starting ajax request");
+	// Abort any existing request
+	if (request)
+	{
+		request.abort();
+	}
+	
+	// setup some local variables
+    var $form = $(this);
+
+   
+
+    // Serialize the data in the form
+    var serializedData = $form.serialize();
+    
+    // Fire off the request to /form.php
+    request = $.ajax({
+        url: "https://hub.jazz.net/code/file/josiahayres-OrionContent/josiahayres%20%7C%20UserLocationHotmap/form.php",
+        type: "get",
+        data: currentLocation
+    });
+    console.log(request);
+    // Callback handler that will be called on success
+    request.done(function (response, textStatus, jqXHR){
+        // Log a message to the console
+        console.log("Hooray, it worked!");
+    });
+    
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
+    
+    // Callback handler that will be called regardless
+    // if the request failed or succeeded
+    request.always(function () {
+        // Reenable the inputs
+        //$inputs.prop("disabled", false);
+    });
+
+    // Prevent default posting of form
+    //event.preventDefault();
+    
 }
 
 function toggleHeatmap() {
