@@ -8,7 +8,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <div class="header">
-	<img src="img/logo.jpg" alt="Mountain View" style="height:100%;right:0;" onclick="centerMap()">
+	<img src="img/logo.jpg" alt="Mountain View" style="height:100%;right:0;cursor:pointer, cursor: hand" onclick="centerMap()" title="Click to re-center the map">
 </div>
 <body>
     <div id="map"></div>
@@ -70,7 +70,8 @@
 		        zoom: 2,
 		        mapTypeId: 'roadmap',
 		        minZoom:2, 
-		        maxZoom: 12
+		        maxZoom: 12,
+		        mapTypeControl:false
 		    });
 		    
 		    heatmap = new google.maps.visualization.HeatmapLayer(
@@ -78,7 +79,7 @@
 		        data: pointsArray
 		    });
 		    heatmap.setMap(map);
-		
+			
 		    var input = /** @type {!HTMLInputElement} */(document.getElementById('pac-input'));
 		
 		    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
