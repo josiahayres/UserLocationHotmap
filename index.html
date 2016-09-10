@@ -11,6 +11,9 @@
 	<img src="img/logo.jpg" alt="Mountain View" style="height:100%;right:0;cursor:pointer;" onclick="centerMap()" title="Click to re-center the map">
 </div>
 <body>
+	<!--div class="buttons">
+		<button onclick="clearHistory()">Clear History</button>>
+	</div-->
     <div id="map"></div>
     <div>
     	<input title="Search for your city. Click on a result to add the location to the map" id="pac-input" style:"height:3em;" class="controls" type="text" placeholder="Where are you from?" onclick="clearText()" tooltip="Tooltip persistant" tooltip-persistent>
@@ -30,15 +33,18 @@
 		var lng;
 		var geocoder;
 		
+		// Clears the search bar text (fired on click)
 		function clearText(){
-		    document.getElementById('pac-input').value = "";
+		    document.getElementById("pac-input").value = "";
 		}
 		
+		// Resenters the map
 		function centerMap(){
 			clearText();
 			map.setZoom(2);
 			map.setCenter({lat:9.441688, lng:179.101678});
 		}
+		
 		function initMap() {
 			var theNewScript = document.createElement("script");
 			theNewScript.type = "text/javascript";
@@ -54,21 +60,16 @@
 			};
 			window.setTimeout(waitForLoad, 1000);
 			
-			
 		    pointsArray = new google.maps.MVCArray([
-		        new google.maps.LatLng(-36.851921, 174.762402),
-		        new google.maps.LatLng(-36.851921, 174.762402),
-		        new google.maps.LatLng(-36.851921, 174.762402),
-		        new google.maps.LatLng(-36.851921, 174.762402),
 		        new google.maps.LatLng(-36.851921, 174.762402)]
 		    );
 		    //var sanFrancisco = new google.maps.LatLng(37.774546, -122.433523);
 		    //var auckland = new google.maps.LatLng(-36.851921, 174.762402);
 		    var center = new google.maps.LatLng(9.441688, 179.101678);
-		    map = new google.maps.Map(document.getElementById('map'), {
+		    map = new google.maps.Map(document.getElementById("map"), {
 		        center: center,
 		        zoom: 2,
-		        mapTypeId: 'roadmap',
+		        mapTypeId: "roadmap",
 		        minZoom:2, 
 		        maxZoom: 12,
 		        mapTypeControl:false
@@ -80,24 +81,24 @@
 		    heatmap.setMap(map);
 		    
 		    var g = [
-			    'rgba(50, 0, 0, 0)',
-		        'rgba(0, 0, 223, 1)',
-		        'rgba(0, 0, 191, 1)',
-		        'rgba(0, 0, 159, 1)',
-		        'rgba(0, 0, 127, 1)',
-		        'rgba(63, 0, 91, 1)',
-		        'rgba(127, 0, 63, 1)',
-		        'rgba(191, 0, 31, 1)',
-		        'rgba(255, 0, 0, 1)'
+			    "rgba(50, 0, 0, 0)",
+		        "rgba(0, 0, 223, 1)",
+		        "rgba(0, 0, 191, 1)",
+		        "rgba(0, 0, 159, 1)",
+		        "rgba(0, 0, 127, 1)",
+		        "rgba(63, 0, 91, 1)",
+		        "rgba(127, 0, 63, 1)",
+		        "rgba(191, 0, 31, 1)",
+		        "rgba(255, 0, 0, 1)"
 			];
-		    heatmap.set('gradient', g);
+		    heatmap.set("gradient", g);
 			
-		    var input = /** @type {!HTMLInputElement} */document.getElementById('pac-input');
+		    var input = /** @type {!HTMLInputElement} */document.getElementById("pac-input");
 		
 		    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 		
 		    var autocomplete = new google.maps.places.Autocomplete(input);
-		    autocomplete.bindTo('bounds', map);
+		    autocomplete.bindTo("bounds", map);
 		
 		    var infowindow = new google.maps.InfoWindow();
 		    marker = new google.maps.Marker({
@@ -106,7 +107,7 @@
 		    });
 		    marker.setMap(map);
 			
-			google.maps.event.addListener(map, 'click', function(event) {
+			google.maps.event.addListener(map, "click", function(event) {
 				var coords = event.latLng.toString();
 				
 				geocodeLatLng(geocoder, map, infowindow, coords);
@@ -114,13 +115,14 @@
 			});
 				
 			
-		    infowindow.addListener('closeclick',function(){
+			// Location name popup close event 
+		    infowindow.addListener("closeclick",function(){
 		        marker.setVisible(false); //removes the marker
 		        centerMap();
 		    });
 		
-		
-		    autocomplete.addListener('place_changed', function() {
+			// Search bar place selected changed
+		    autocomplete.addListener("place_changed", function() {
 		        infowindow.close();
 		        marker.setVisible(false);
 		        var place = autocomplete.getPlace();
@@ -155,16 +157,16 @@
 		        /*pointsArray.push(newLocation);*/
 				saveNewLocation(newLocation, lat_lng);
 		
-		        var address = '';
+		        var address = "";
 		        if (place.address_components) {
 		            address = [
-		                place.address_components[0] && place.address_components[0].short_name || '',
-		                place.address_components[1] && place.address_components[1].short_name || '',
-		                place.address_components[2] && place.address_components[2].short_name || ''
-		            ].join(' ');
+		                place.address_components[0] && place.address_components[0].short_name || "",
+		                place.address_components[1] && place.address_components[1].short_name || "",
+		                place.address_components[2] && place.address_components[2].short_name || ""
+		            ].join(" ");
 		        }
 		
-		        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+		        infowindow.setContent("<div><strong>" + place.name + "</strong><br>" + address);
 		        infowindow.open(map, marker);
 				
 			});   
@@ -172,6 +174,8 @@
 			setTimeout(function a(){infowindow.close();}, 3000);
 			
 			geocoder = new google.maps.Geocoder;
+			
+			loadLocations();
 		}
 		
 		/* Saves location */
@@ -182,31 +186,49 @@
 			var id = pointCounter(lat_lng);
 			
 			var addItem = function (id, lat_lng) {
-			    var oldItems = JSON.parse(localStorage.getItem('locationArray')) || [];
+			    var oldItems = JSON.parse(localStorage.getItem("locationArray")) || [];
 			    
 			    var newItem = {
-			    	'id': id,
-			        'lat_lng': lat_lng
+			    	"id": id,
+			        "lat_lng": lat_lng
 			    };
 			    
 			    oldItems.push(newItem);
 			    
-			    localStorage.setItem('locationArray', JSON.stringify(oldItems));
+			    localStorage.setItem("locationArray", JSON.stringify(oldItems));
 			};
 			
-			console.log(JSON.parse(localStorage.getItem('locationArray')));
+			console.log(JSON.parse(localStorage.getItem("locationArray")));
 			
 			addItem(id, lat_lng);
 						
-			console.log(JSON.parse(localStorage.getItem('locationArray')));
-		    
 		}
-		
+		// Loads location items saved in localStorage
+		function loadLocations()
+		{
+			var index;
+			var locations = JSON.parse(localStorage.getItem("locationArray"));
+			console.log("loadLocations");
+			// For every location in local storage
+			// Split latLng string into array 
+			// Create new google map latLng obj
+			// Push to points array overlay
+			for (index = 0; index < locations.length; ++index) {
+				var locationNew = locations[index].lat_lng;
+				var latlngStr = locationNew.split(",", 2);
+				
+	     		console.log("lat:\"" + latlngStr[0] + "\" lng:\"" + latlngStr[1]+"\"");
+			    
+			    var newLocation = new google.maps.LatLng(latlngStr[0],latlngStr[1]);
+			    pointsArray.push(newLocation);
+			    
+			}
+		}
 		function eventFire(el, etype){
 		  if (el.fireEvent) {
-		    el.fireEvent('on' + etype);
+		    el.fireEvent("on" + etype);
 		  } else {
-		    var evObj = document.createEvent('Events');
+		    var evObj = document.createEvent("Events");
 		    evObj.initEvent(etype, true, false);
 		    el.dispatchEvent(evObj);
 		  }
@@ -214,42 +236,42 @@
 		
 		function changeGradient() {
 			var g = [
-			    'rgba(50, 0, 0, 0)',
-		        'rgba(0, 0, 223, 1)',
-		        'rgba(0, 0, 191, 1)',
-		        'rgba(0, 0, 159, 1)',
-		        'rgba(0, 0, 127, 1)',
-		        'rgba(63, 0, 91, 1)',
-		        'rgba(127, 0, 63, 1)',
-		        'rgba(191, 0, 31, 1)',
-		        'rgba(255, 0, 0, 1)'
+			    "rgba(50, 0, 0, 0)",
+		        "rgba(0, 0, 223, 1)",
+		        "rgba(0, 0, 191, 1)",
+		        "rgba(0, 0, 159, 1)",
+		        "rgba(0, 0, 127, 1)",
+		        "rgba(63, 0, 91, 1)",
+		        "rgba(127, 0, 63, 1)",
+		        "rgba(191, 0, 31, 1)",
+		        "rgba(255, 0, 0, 1)"
 			];
 
 		    var gradient = [
-		        'rgba(0, 255, 255, 0)',
-		        'rgba(0, 255, 255, 1)',
-		        'rgba(0, 191, 255, 1)',
-		        'rgba(0, 127, 255, 1)',
-		        'rgba(0, 63, 255, 1)',
-		        'rgba(0, 0, 255, 1)',
-		        'rgba(0, 0, 223, 1)',
-		        'rgba(0, 0, 191, 1)',
-		        'rgba(0, 0, 159, 1)',
-		        'rgba(0, 0, 127, 1)',
-		        'rgba(63, 0, 91, 1)',
-		        'rgba(127, 0, 63, 1)',
-		        'rgba(191, 0, 31, 1)',
-		        'rgba(255, 0, 0, 1)'
+		        "rgba(0, 255, 255, 0)",
+		        "rgba(0, 255, 255, 1)",
+		        "rgba(0, 191, 255, 1)",
+		        "rgba(0, 127, 255, 1)",
+		        "rgba(0, 63, 255, 1)",
+		        "rgba(0, 0, 255, 1)",
+		        "rgba(0, 0, 223, 1)",
+		        "rgba(0, 0, 191, 1)",
+		        "rgba(0, 0, 159, 1)",
+		        "rgba(0, 0, 127, 1)",
+		        "rgba(63, 0, 91, 1)",
+		        "rgba(127, 0, 63, 1)",
+		        "rgba(191, 0, 31, 1)",
+		        "rgba(255, 0, 0, 1)"
 		    ];
-		    heatmap.set('gradient', heatmap.get('gradient') ? null : g);
+		    heatmap.set("gradient", heatmap.get("gradient") ? null : g);
 		}
 		
 		function changeRadius() {
-		    heatmap.set('radius', heatmap.get('radius') ? null : 30);
+		    heatmap.set("radius", heatmap.get("radius") ? null : 30);
 		}
 		
 		function changeOpacity() {
-		    heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+		    heatmap.set("opacity", heatmap.get("opacity") ? null : 0.2);
 		}
     	
     	function pointCounter() {
@@ -268,9 +290,11 @@
 		}
 		
 		function geocodeLatLng(geocoder, map, infowindow, input) {
+			/*
 			console.log("input:" + input);
-	        input = input.replace(/[{( )}]/g, '');
-	        var latlngStr = input.split(',', 2);
+			// strips brackets and spaces from string 
+	        input = input.replace(/[{( )}]/g, "");
+	        var latlngStr = input.split(",", 2);
 	        
 	        console.log("lat:\"" + latlngStr[0] + "\" lng:\"" + latlngStr[1]+"\"");
 	        
@@ -278,8 +302,8 @@
 	        
 	        console.log("latlng:" + latlng);
 	        
-	        geocoder.geocode({'location': latlng}, function(results, status) {
-	          if (status === 'OK') {
+	        geocoder.geocode({"location": latlng}, function(results, status) {
+	          if (status === "OK") {
 	            if (results[1]) {
 	              	//map.setZoom(11);
 					marker = new google.maps.Marker({
@@ -289,15 +313,14 @@
 	              infowindow.setContent(results[1].formatted_address);
 	              infowindow.open(map, marker);
 	            } else {
-	              window.alert('No results found');
+	              window.alert("No results found");
 	            }
 	          } else {
-	            window.alert('Geocoder failed due to: ' + status);
+	            window.alert("Geocoder failed due to: " + status);
 	          }
 	        });
+	        */
 	      }
-
-	
 	
     </script>
 
